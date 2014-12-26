@@ -48,7 +48,7 @@ namespace HAT_API_PSADS
                 new_prdno = reader.GetOrdinal("prdno");
                 new_account = reader.GetOrdinal("asno");
                 new_lotno = reader.GetOrdinal("lotno");
-                new_salena = reader.GetOrdinal("salena");
+                new_salena = reader.GetOrdinal("saleno");
 
                 //date
                 new_iodate = reader.GetOrdinal("iodate");
@@ -131,7 +131,7 @@ namespace HAT_API_PSADS
                 /// ERP欄位名稱                 prdno
                 /// 
                 recordStr = reader.GetString(new_prdno).Trim();
-                if (recordStr != "" && recordStr != null)
+                if (recordStr == "" || recordStr == null)
                     entity["new_prdno"] = null;
                 else
                 {
@@ -140,8 +140,8 @@ namespace HAT_API_PSADS
                     {
                         EnvironmentSetting.ErrorMsg = "CRM 查無相符合資料 : \n";
                         EnvironmentSetting.ErrorMsg += "\tCRM實體 : product\n";
+                        EnvironmentSetting.ErrorMsg += "\tCRM欄位 : productnumber\n";
                         EnvironmentSetting.ErrorMsg += "\tERP欄位 : prdno\n";
-                        //EnvironmentSetting.ErrorMsg += "\tERP資料 : " + recordStr + "\n";
                         Console.WriteLine(EnvironmentSetting.ErrorMsg);
                         return TransactionStatus.Fail;
                     }
@@ -153,27 +153,69 @@ namespace HAT_API_PSADS
                 /// CRM關聯欄位     客戶編碼      productnumber
                 /// ERP欄位名稱                   asno
                 /// 
-                //recordStr = reader.GetString(new_account).Trim();
-                //if (recordStr != "" && recordStr != null)
-                //    new_cuship["new_account"] = new EntityReference("account", Lookup.RetrieveEntityGuid("account", recordStr, "accountnumber", "accountid"));
+                recordStr = reader.GetString(new_account).Trim();
+                if (recordStr == "" || recordStr == null)
+                    entity["new_account"] = null;
+                else
+                {
+                    recordGuid = Lookup.RetrieveEntityGuid("account", recordStr, "accountnumber");
+                    if (recordGuid == Guid.Empty)
+                    {
+                        EnvironmentSetting.ErrorMsg = "CRM 查無相符合資料 : \n";
+                        EnvironmentSetting.ErrorMsg += "\tCRM實體 : account\n";
+                        EnvironmentSetting.ErrorMsg += "\tCRM欄位 : productnumber\n";
+                        EnvironmentSetting.ErrorMsg += "\tERP欄位 : asno\n";
+                        Console.WriteLine(EnvironmentSetting.ErrorMsg);
+                        return TransactionStatus.Fail;
+                    }
+                    entity["new_account"] = new EntityReference("account", recordGuid);
+                }
 
                 /// CRM欄位名稱     批號          new_product_lot
                 /// CRM關聯實體     產品批號      new_lotno
                 /// CRM關聯欄位     批號          new_lotno
                 /// ERP欄位名稱                   lotno
                 /// 
-                //recordStr = reader.GetString(new_lotno).Trim();
-                //if (recordStr != "" && recordStr != null)
-                //    new_cuship["new_lotno"] = new EntityReference("new_product_lot", Lookup.RetrieveEntityGuid("new_product_lot", recordStr, "new_lotno", "new_product_lotid"));
+                recordStr = reader.GetString(new_lotno).Trim();
+                if (recordStr == "" || recordStr == null)
+                    entity["new_lotno"] = null;
+                else
+                {
+                    recordGuid = Lookup.RetrieveEntityGuid("product", recordStr, "productnumber");
+                    if (recordGuid == Guid.Empty)
+                    {
+                        EnvironmentSetting.ErrorMsg = "CRM 查無相符合資料 : \n";
+                        EnvironmentSetting.ErrorMsg += "\tCRM實體 : new_lotno\n";
+                        EnvironmentSetting.ErrorMsg += "\tCRM欄位 : new_lotno\n";
+                        EnvironmentSetting.ErrorMsg += "\tERP欄位 : lotno\n";
+                        Console.WriteLine(EnvironmentSetting.ErrorMsg);
+                        return TransactionStatus.Fail;
+                    }
+                    entity["new_lotno"] = new EntityReference("new_product_lot", recordGuid);
+                }
 
                 /// CRM欄位名稱     業務員     new_salena
                 /// CRM關聯實體     使用者     systemuser
                 /// CRM關聯欄位     業務代碼   new_saleno
-                /// ERP欄位名稱                salena
+                /// ERP欄位名稱                saleno
                 /// 
-                //recordStr = reader.GetString(new_salena).Trim();
-                //if (recordStr != "" && recordStr != null)
-                //    new_cuship["new_salena"] = new EntityReference("systemuser", Lookup.RetrieveEntityGuid("systemuser", recordStr, "new_saleno", "systemuserid"));
+                recordStr = reader.GetString(new_salena).Trim();
+                if (recordStr == "" || recordStr == null)
+                    entity["new_salena"] = null;
+                else
+                {
+                    recordGuid = Lookup.RetrieveEntityGuid("systemuser", recordStr, "new_saleno");
+                    if (recordGuid == Guid.Empty)
+                    {
+                        EnvironmentSetting.ErrorMsg = "CRM 查無相符合資料 : \n";
+                        EnvironmentSetting.ErrorMsg += "\tCRM實體 : systemuser\n";
+                        EnvironmentSetting.ErrorMsg += "\tCRM欄位 : new_saleno\n";
+                        EnvironmentSetting.ErrorMsg += "\tERP欄位 : saleno\n";
+                        Console.WriteLine(EnvironmentSetting.ErrorMsg);
+                        return TransactionStatus.Fail;
+                    }
+                    entity["new_salena"] = new EntityReference("systemuser", recordGuid);
+                }
 
                 try
                 {

@@ -45,6 +45,7 @@ namespace HAT_API_PSADS
                                 {
                                     int success = 0;
                                     int fail = 0;
+                                    int partially = 0;
                                     while (reader.Read())
                                     {
                                         //判斷CRM是否有資料
@@ -86,7 +87,7 @@ namespace HAT_API_PSADS
                                         }
                                     }
                                     //更新DataSync 成功、失敗、完成時間
-                                    dataSync.UpdateDataSyncForCRM(success, fail);
+                                    dataSync.UpdateDataSyncForCRM(success, fail, partially);
                                 }
                                 else
                                 {
