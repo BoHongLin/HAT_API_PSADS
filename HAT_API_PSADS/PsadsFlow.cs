@@ -28,7 +28,7 @@ namespace HAT_API_PSADS
                     if (EnvironmentSetting.ErrorType == ErrorType.None)
                     {
                         //get information from DB
-                        EnvironmentSetting.GetList("select * from dbo.v_psads");
+                        EnvironmentSetting.GetList("select * from dbo.v_psads where salena like '%趙%'");
                         if (EnvironmentSetting.ErrorType == ErrorType.None)
                         {
                             //get reader
@@ -53,7 +53,7 @@ namespace HAT_API_PSADS
                                         if (EnvironmentSetting.ErrorType == ErrorType.None)
                                         {
                                             TransactionStatus transactionStatus = TransactionStatus.None;
-                                            TransactionType transactionType = TransactionType.Insert; ;
+                                            TransactionType transactionType = TransactionType.Insert;
                                             if (existCushipId == Guid.Empty)
                                             {
                                                 //create

@@ -111,8 +111,8 @@ namespace HAT_API_PSADS
                 entity["new_num"] = Convert.ToDouble(reader.GetDecimal(new_num));
 
                 //money
-                entity["new_ntaxamt"] = reader.GetDecimal(new_ntaxamt);
-                entity["new_price"] = reader.GetDecimal(new_price);
+                entity["new_ntaxamt"] = new Money(reader.GetDecimal(new_ntaxamt));
+                entity["new_price"] = new Money(reader.GetDecimal(new_price));
 
                 //string
                 entity["new_unkey"] = reader.GetInt32(new_unkey).ToString();
@@ -125,7 +125,7 @@ namespace HAT_API_PSADS
                 String recordStr;
                 Guid recordGuid;
 
-                /// CRM欄位名稱     商品代號    new_grpno
+                /// CRM欄位名稱     商品代號    new_prdno
                 /// CRM關聯實體     產品        product
                 /// CRM關聯欄位     商品代號    productnumber
                 /// ERP欄位名稱                 prdno
@@ -171,8 +171,8 @@ namespace HAT_API_PSADS
                     entity["new_account"] = new EntityReference("account", recordGuid);
                 }
 
-                /// CRM欄位名稱     批號          new_product_lot
-                /// CRM關聯實體     產品批號      new_lotno
+                /// CRM欄位名稱     批號          new_lotno
+                /// CRM關聯實體     產品批號      new_product_lot
                 /// CRM關聯欄位     批號          new_lotno
                 /// ERP欄位名稱                   lotno
                 /// 
@@ -181,11 +181,18 @@ namespace HAT_API_PSADS
                     entity["new_lotno"] = null;
                 else
                 {
-                    recordGuid = Lookup.RetrieveEntityGuid("product", recordStr, "productnumber");
+                    var prdStr = reader.GetString(new_prdno).Trim();
+                    if (prdStr == "" || prdStr == null)
+                    {
+                        EnvironmentSetting.ErrorMsg = "ERP 有批號無產品 無法比對\n";
+                        Console.WriteLine(EnvironmentSetting.ErrorMsg);
+                        return TransactionStatus.Fail;
+                    }
+                    recordGuid = Lookup.RetrieveEntityGuid("product", prdStr, "productnumber", "new_product_lot", recordStr, "new_lotno", "new_product");
                     if (recordGuid == Guid.Empty)
                     {
                         EnvironmentSetting.ErrorMsg = "CRM 查無相符合資料 : \n";
-                        EnvironmentSetting.ErrorMsg += "\tCRM實體 : new_lotno\n";
+                        EnvironmentSetting.ErrorMsg += "\tCRM實體 : new_product_lot\n";
                         EnvironmentSetting.ErrorMsg += "\tCRM欄位 : new_lotno\n";
                         EnvironmentSetting.ErrorMsg += "\tERP欄位 : lotno\n";
                         Console.WriteLine(EnvironmentSetting.ErrorMsg);
@@ -194,14 +201,14 @@ namespace HAT_API_PSADS
                     entity["new_lotno"] = new EntityReference("new_product_lot", recordGuid);
                 }
 
-                /// CRM欄位名稱     業務員     new_salena
+                /// CRM欄位名稱     業務員     owenerid
                 /// CRM關聯實體     使用者     systemuser
                 /// CRM關聯欄位     業務代碼   new_saleno
                 /// ERP欄位名稱                saleno
                 /// 
                 recordStr = reader.GetString(new_salena).Trim();
                 if (recordStr == "" || recordStr == null)
-                    entity["new_salena"] = null;
+                    entity["ownerid"] = null;
                 else
                 {
                     recordGuid = Lookup.RetrieveEntityGuid("systemuser", recordStr, "new_saleno");
@@ -214,7 +221,7 @@ namespace HAT_API_PSADS
                         Console.WriteLine(EnvironmentSetting.ErrorMsg);
                         return TransactionStatus.Fail;
                     }
-                    entity["new_salena"] = new EntityReference("systemuser", recordGuid);
+                    entity["ownerid"] = new EntityReference("systemuser", recordGuid);
                 }
 
                 try
