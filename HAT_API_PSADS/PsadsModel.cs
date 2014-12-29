@@ -36,7 +36,7 @@ namespace HAT_API_PSADS
 
         //string
         private int new_unkey;
-        private static String[] stringNameArray = { "invoice", "rmk", "saleno", "srno" };
+        private static String[] stringNameArray = { "buyno", "invoice", "rmk", "saleno", "srno" };
         private int[] stringIntArray = new int[stringNameArray.Length];
 
 
