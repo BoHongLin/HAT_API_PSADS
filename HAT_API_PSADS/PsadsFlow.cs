@@ -28,7 +28,7 @@ namespace HAT_API_PSADS
                     if (EnvironmentSetting.ErrorType == ErrorType.None)
                     {
                         //get information from DB
-                        EnvironmentSetting.GetList("select * from dbo.v_psads where salena like '%趙%'");
+                        EnvironmentSetting.GetList("select * from dbo.v_psads");
                         if (EnvironmentSetting.ErrorType == ErrorType.None)
                         {
                             //get reader
@@ -120,7 +120,7 @@ namespace HAT_API_PSADS
                     break;
             }
             Console.WriteLine("執行完畢...");
-            Console.ReadLine();
+            //Console.ReadLine();
         }
 
     }

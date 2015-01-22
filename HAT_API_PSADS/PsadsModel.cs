@@ -20,7 +20,6 @@ namespace HAT_API_PSADS
         private int new_prdno;
         private int new_account;
         private int new_lotno;
-        private int new_salena;
 
         //date
         private int new_iodate;
@@ -36,7 +35,7 @@ namespace HAT_API_PSADS
 
         //string
         private int new_unkey;
-        private static String[] stringNameArray = { "buyno", "invoice", "rmk", "saleno", "srno" };
+        private static String[] stringNameArray = { "buyno", "invoice", "rmk", "salena", "saleno", "srno" };
         private int[] stringIntArray = new int[stringNameArray.Length];
 
 
@@ -48,7 +47,6 @@ namespace HAT_API_PSADS
                 new_prdno = reader.GetOrdinal("prdno");
                 new_account = reader.GetOrdinal("asno");
                 new_lotno = reader.GetOrdinal("lotno");
-                new_salena = reader.GetOrdinal("saleno");
 
                 //date
                 new_iodate = reader.GetOrdinal("iodate");
@@ -206,7 +204,7 @@ namespace HAT_API_PSADS
                 /// CRM關聯欄位     業務代碼   new_saleno
                 /// ERP欄位名稱                saleno
                 /// 
-                recordStr = reader.GetString(new_salena).Trim();
+                recordStr = reader.GetString(stringIntArray[4]).Trim();
                 if (recordStr == "" || recordStr == null)
                     entity["ownerid"] = null;
                 else
